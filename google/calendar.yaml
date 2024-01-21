@@ -1,0 +1,182 @@
+openapi: 3.1.0
+info:
+  title: GPT Customizer for Google Calendar
+  version: 1.0.0
+  description: This API enables the custom GPT to interact with Google Calendar, allowing it to retrieve, create, update, and delete calendar events.
+servers:
+  - url: 'https://www.googleapis.com/calendar/v3'
+    description: Google Calendar API base URL
+paths:
+  /calendars/{calendarId}/events:
+    get:
+      summary: Get Events
+      description: Returns events on the specified calendar
+      operationId: ListEvents
+      parameters:
+        - in: query
+          name: alwaysIncludeEmail
+          description: Whether to always include a value in the email field for the organizer, creator and attendees, even if no real email is available.
+          schema:
+            type: boolean
+
+        - in: path
+          name: calendarId
+          description: Calendar identifier
+          required: true
+          schema:
+            type: string
+
+        - in: query
+          name: iCalUID
+          description: Specifies event ID in the iCalendar format to be included in the response
+          schema:
+            type: string
+
+        - in: query
+          name: maxAttendees
+          description: The maximum number of attendees to include in the response
+          schema:
+            type: integer
+            format: int32
+
+        - in: query
+          name: maxResults
+          description: Maximum number of events returned on one result page
+          schema:
+            type: integer
+            format: int32
+
+        - in: query
+          name: orderBy
+          description: The order of the events returned in the result
+          schema:
+            type: string
+            enum: [orderOption1, orderOption2] # Replace with actual order options
+
+        - in: query
+          name: pageToken
+          description: Token specifying which result page to return
+          schema:
+            type: string
+
+        - in: query
+          name: privateExtendedProperty
+          description: Extended properties constraint specified as propertyName=value
+          schema:
+            type: string
+
+        - in: query
+          name: q
+          description: Free text search terms to find events that match these terms in any field, except for extended properties
+          schema:
+            type: string
+
+        - in: query
+          name: sharedExtendedProperty
+          description: Extended properties constraint specified as propertyName=value
+          schema:
+            type: string
+
+        - in: query
+          name: showDeleted
+          description: Whether to include deleted events (with status equals "cancelled") in the result
+          schema:
+            type: boolean
+
+        - in: query
+          name: showHiddenInvitations
+          description: Whether to include hidden invitations in the result
+          schema:
+            type: boolean
+
+        - in: query
+          name: singleEvents
+          description: Whether to expand recurring events into instances and only return single one-off events and instances of recurring events, but not the underlying recurring events themselves
+          schema:
+            type: boolean
+
+        - in: query
+          name: syncToken
+          description: Token obtained from the nextSyncToken field returned on the last page of results from the previous list request
+          schema:
+            type: string
+
+        - in: query
+          name: timeMax
+          description: Upper bound (exclusive) for an event's start time to filter by
+          schema:
+            type: string
+            format: date-time
+
+        - in: query
+          name: timeMin
+          description: Lower bound (inclusive) for an event's end time to filter by
+          schema:
+            type: string
+            format: date-time
+
+        - in: query
+          name: timeZone
+          description: Time zone used in the response
+          schema:
+            type: string
+
+        - in: query
+          name: updatedMin
+          description: Lower bound for an event's last modification time (as a RFC3339 timestamp) to filter by
+          schema:
+            type: string
+            format: date-time
+
+      responses:
+        200:
+          description: OK
+      tags:
+      - Event
+    post:
+      operationId: createCalendarEvent
+      summary: Create a new calendar event
+      parameters:
+        - name: calendarId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Event created
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        summary:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        start:
+          type: object
+          properties:
+            dateTime:
+              type: string
+            timeZone:
+              type: string
+        end:
+          type: object
+          properties:
+            dateTime:
+              type: string
+            timeZone:
+              type: string
+    EventList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Event'
